@@ -1,7 +1,7 @@
 'use strict';
 // A replay of supplied trades, not a strategy run against newly fetched candles.
 (function (root) {
-  const MIN_DATE = Date.UTC(2020, 0, 1);
+  const MIN_DATE = Date.UTC(2021, 0, 1);
   const DAY = 86400000;
   function parseDate(value) {
     const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(value).trim());
@@ -59,7 +59,7 @@
       partial: from < Math.floor(availableFrom / DAY) * DAY || through > Math.floor(availableTo / DAY) * DAY,
       availableFrom, availableTo };
   }
-  const api = { replay, parseCapital, parseDate, date, stamp, pair };
+  const api = { MIN_DATE, replay, parseCapital, parseDate, date, stamp, pair };
   root.CryptoLoveBacktest = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(globalThis);
