@@ -11,16 +11,17 @@
 <button class="flag" data-lang="es" aria-label="Español" title="Español"><svg viewBox="0 0 60 40"><path fill="#e73538" d="M0 0h60v40H0z"/><path fill="#ffd353" d="M0 10h60v20H0z"/><path fill="#b43038" d="M17 15h6v11h-6z"/></svg></button>
 <button class="flag" data-lang="fr" aria-label="Français" title="Français"><svg viewBox="0 0 60 40"><path fill="#fff" d="M0 0h60v40H0z"/><path fill="#1845a0" d="M0 0h20v40H0z"/><path fill="#ee3d51" d="M40 0h20v40H40z"/></svg></button>
 <button class="flag" data-lang="de" aria-label="Deutsch" title="Deutsch"><svg viewBox="0 0 60 40"><path fill="#171717" d="M0 0h60v14H0z"/><path fill="#db3343" d="M0 14h60v13H0z"/><path fill="#ffcd46" d="M0 27h60v13H0z"/></svg></button></div>
-<button id="authButton" class="button small" data-i18n="signIn">Sign in</button><button id="privateButton" class="button small" hidden data-i18n="privateArea">Private area ↗</button></div></header>
+<button id="authButton" class="button small" data-i18n="signInUp">Sign in/up</button><button id="privateButton" class="button small" hidden data-i18n="privateArea">Private area ↗</button></div></header>
 <main>
 <section class="hero shell">
 <div class="hero-copy"><div class="eyebrow"><span class="tiny-heart">♥</span> <span data-i18n="automated">AUTOMATED CRYPTO TRADING</span></div>
 <h1><span>Loving<br>Crypto<span class="period">.</span></span><img class="living-heart" src="logo.svg" alt="Red heart with a stock chart"></h1>
 <p class="micro" data-i18n="metaNote">MetaMask · Hyperliquid · Revocable trading authorization</p></div>
-<div class="hero-data"><div class="hero-actions"><div class="minimum"><span data-i18n="minimum">MINIMUM TRADING CAPITAL</span><strong>100 <em>USDC</em></strong></div><button id="connectButton" class="button primary" hidden><span id="connectLabel">Connect my wallet</span><span aria-hidden="true">↗</span></button></div><article class="live-card"><div class="card-top"><span class="eyebrow"><i class="live-dot"></i><span data-i18n="realPerformance">REAL ACCOUNT PERFORMANCE</span></span><span class="live-tag">LIVE</span></div>
+<div class="hero-data"><div class="hero-actions" id="walletActions" hidden><button id="connectButton" class="button primary" hidden><span id="connectLabel">Connect my wallet</span><span aria-hidden="true">↗</span></button></div><article class="live-card"><div class="card-top"><span class="eyebrow"><i class="live-dot"></i><span data-i18n="realPerformance">REAL ACCOUNT PERFORMANCE</span></span><span class="live-tag">LIVE</span></div>
+<div class="minimum"><span data-i18n="minimum">MINIMUM TRADING CAPITAL</span><strong>100 <em>USDC</em></strong></div>
 <div class="live-readout" tabindex="0"><div id="liveReturn" class="live-number">—<span>%</span></div><p class="since" data-i18n="since">Since 10 October 2026</p>
 <p id="liveStatus" class="micro" aria-live="polite" data-i18n="awaiting">Connecting to account…</p></div><div class="live-rule"></div>
-<a id="auditLink" class="text-link" hidden target="_blank" rel="noopener noreferrer"><span data-i18n="audit">Verify account on Hypurrscan</span> ↗</a>
+<a id="auditLink" class="text-link" hidden target="_blank" rel="noopener noreferrer"><span data-i18n="audit">Verify Real account on Hypurrscan</span> ↗</a>
 </article></div>
 </section>
 <section id="how" class="steps shell" aria-label="How it works"><article><span class="step-no">01</span><div><h2 data-i18n="step1">Sign in or Sign up and connect wallet</h2><p data-i18n="step1Text">Create your account, confirm your email and connect MetaMask.</p></div></article><article><span class="step-no">02</span><div><h2 data-i18n="step2">Authorize the strategy</h2><p data-i18n="step2Text">Approve your own trading agent. You can pause entries or revoke access.</p></div></article><article><span class="step-no">03</span><div><h2 data-i18n="step3">Follow every trade</h2><p data-i18n="step3Text">Real executions, email updates and your results in one private area.</p></div></article></section>
