@@ -75,6 +75,23 @@ const accountTexts={
 };
 for(const [language,copy] of Object.entries(accountTexts))Object.assign(dictionaries[language],copy);
 
+const contactTexts={
+ en:{contact:'Contact us',supportSubject:'CryptoLoveBot support',supportUnavailable:'The support email is not configured yet. Please try again later.'},
+ es:{contact:'Contacto',supportSubject:'Soporte de CryptoLoveBot',supportUnavailable:'El correo de soporte todavía no está configurado. Vuelve a intentarlo más tarde.'},
+ fr:{contact:'Contact',supportSubject:'Assistance CryptoLoveBot',supportUnavailable:'L’adresse e-mail d’assistance n’est pas encore configurée. Réessayez plus tard.'},
+ de:{contact:'Kontakt',supportSubject:'CryptoLoveBot Support',supportUnavailable:'Die Support-E-Mail ist noch nicht eingerichtet. Versuche es später erneut.'}
+};
+for(const [language,copy] of Object.entries(contactTexts))Object.assign(dictionaries[language],copy);
+function renderContact(){
+ const email=typeof settings.supportEmail==='string'?settings.supportEmail.trim():'';
+ $('contactLink').href=email?'mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(t('supportSubject')):'#contact';
+}
+$('contactLink').onclick=event=>{
+ if($('contactLink').getAttribute('href').startsWith('mailto:'))return;
+ event.preventDefault();text('actionTitle',t('contact'));text('actionBody',t('supportUnavailable'));
+ text('actionMessage','');$('resetForm').hidden=true;$('actionConfirm').hidden=true;$('actionDialog').showModal();
+};
+
 let feeState=null, feeReceivedAt=0;
 function renderFeeNotice(){
  const visible=!!me&&!!feeState&&Number(feeState.pendingAmount)>0;
@@ -108,7 +125,7 @@ const num=(n,d=2)=>Number(n).toLocaleString('de-DE',{maximumFractionDigits:d,min
 const stamp=x=>CryptoLoveBacktest.stamp(x);
 const pair=x=>CryptoLoveBacktest.pair(x);
 const text=(id,value)=>{$(id).textContent=value};
-function applyLanguage(){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));document.querySelectorAll('.flag').forEach(el=>{el.classList.toggle('selected',el.dataset.lang===lang);el.setAttribute('aria-pressed',String(el.dataset.lang===lang))});setMode(signupMode);renderUser();renderLive();renderFeeNotice();if(backtest){renderReplay();renderHistory();renderBacktestMessage()}if(settings.feeBasis==='margin'){text('feeExplanation',t('feeMargin'));document.querySelector('[data-i18n="consentFee"]').textContent=t('feeMargin')}}
+function applyLanguage(){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));document.querySelectorAll('.flag').forEach(el=>{el.classList.toggle('selected',el.dataset.lang===lang);el.setAttribute('aria-pressed',String(el.dataset.lang===lang))});setMode(signupMode);renderContact();renderUser();renderLive();renderFeeNotice();if(backtest){renderReplay();renderHistory();renderBacktestMessage()}if(settings.feeBasis==='margin'){text('feeExplanation',t('feeMargin'));document.querySelector('[data-i18n="consentFee"]').textContent=t('feeMargin')}}
 document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{lang=b.dataset.lang;localStorage.setItem('cryptoloveLanguage',lang);applyLanguage();if(me)loadTrades()});
 function toast(s){text('toast',s);$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,6500)}
 function authFeedback(message,kind='info'){text('authMessage',message);$('authMessage').className='form-message '+kind}
@@ -199,7 +216,7 @@ function renderLive(){
  $('liveReturn').replaceChildren(document.createTextNode(valid?(percent>0?'+':'')+num(percent):'—'),Object.assign(document.createElement('span'),{textContent:'%'}));
  $('liveReturn').classList.toggle('negative',valid&&percent<0);
  if(valid){
-  const status=live.status==='no_trades'?t('noTrades'):t('estimated');
+  const status=live.status==='no_trades'?t('noTrades'):'';
   text('liveStatus',(live.stale?t('stale')+' ':'')+status);
   $('liveStatus').title=live.asOf?t('updated')+': '+stamp(live.asOf)+' UTC':'';
  }else{
@@ -207,8 +224,8 @@ function renderLive(){
   const connected=['insufficient_baseline','awaiting_next_sample'].includes(live?.status);
   text('liveStatus',t(connected?'baselineMissing':!live||live.status==='unconfigured'?'awaiting':'noData'));
  }
+ $('liveStatus').hidden=!$('liveStatus').textContent.trim();
  if(live?.explorer&&/^https:\/\/hypurrscan\.io\/address\/0x[0-9a-f]{40}$/.test(live.explorer)){$('auditLink').hidden=false;$('auditLink').href=live.explorer}else $('auditLink').hidden=true;
- document.querySelector('.live-rule').hidden=$('auditLink').hidden;
 }
 async function loadLive(){try{live=await api('/public/performance');renderLive()}catch{if(live)live.stale=true;else live={status:'unavailable',returnPct:null};renderLive()}}
 function renderBacktestMessage(){
