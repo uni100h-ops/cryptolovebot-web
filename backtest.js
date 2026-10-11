@@ -2,6 +2,7 @@
 // A replay of supplied trades, not a strategy run against newly fetched candles.
 (function (root) {
   const MIN_DATE = Date.UTC(2021, 0, 1);
+  const MAX_DATE = Date.UTC(2026, 9, 7);
   const DAY = 86400000;
   function parseDate(value) {
     const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(String(value).trim());
@@ -36,6 +37,7 @@
     const from = parseDate(start), through = parseDate(end), initial = parseCapital(capital);
     if (!Number.isFinite(from) || !Number.isFinite(through)) throw Error('invalidDates');
     if (from < MIN_DATE || through < MIN_DATE) throw Error('minDate');
+    if (from > MAX_DATE || through > MAX_DATE) throw Error('maxDate');
     if (from > through) throw Error('dateOrder');
     if (!Number.isFinite(initial) || initial < 100) throw Error('minCapital');
     const to = through + DAY;
@@ -59,7 +61,7 @@
       partial: from < Math.floor(availableFrom / DAY) * DAY || through > Math.floor(availableTo / DAY) * DAY,
       availableFrom, availableTo };
   }
-  const api = { MIN_DATE, replay, parseCapital, parseDate, date, stamp, pair };
+  const api = { MIN_DATE, MAX_DATE, replay, parseCapital, parseDate, date, stamp, pair };
   root.CryptoLoveBacktest = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(globalThis);
