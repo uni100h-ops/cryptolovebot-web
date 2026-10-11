@@ -182,7 +182,7 @@ def build(path, sheet_name, zone_name, start_year=None, end_year=None):
     result = {
         "source": path.name,
         "period": {"from": start, "to": trades[-1]["close"], "endExclusive": end},
-        "methodology": "Illustrative index compounds column H price returns in closing-time order. Only executed, completed simulator trades are included. Overlapping positions, leverage, capital allocation, exchange costs and CryptoLove fees are not reproduced by this index. This is historical simulation, not live performance.",
+        "methodology": "Illustrative index compounds column H price returns in closing-time order. Only executed, completed simulator trades are included. Overlapping positions, leverage, capital allocation, exchange costs and CryptoLoveBot fees are not reproduced by this index. This is historical simulation, not live performance.",
         "excluded": excluded,
         "provenance": {
             "sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "sheet": sheet_name,

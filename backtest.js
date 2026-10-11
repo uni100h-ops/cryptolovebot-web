@@ -25,8 +25,15 @@
     const symbol = String(coin).replace(/[\s\/-]/g, '');
     return /USDC$/i.test(symbol) ? symbol : symbol + 'USDC';
   }
+  function parseCapital(value) {
+    if (typeof value === 'number') return value;
+    const s = String(value).trim();
+    // European display/input: 1.000,50. Reject ambiguous US separators.
+    if (!/^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d{1,2})?$/.test(s)) return NaN;
+    return Number(s.replace(/\./g, '').replace(',', '.'));
+  }
   function replay(history, { start, end, capital }) {
-    const from = parseDate(start), through = parseDate(end), initial = Number(capital);
+    const from = parseDate(start), through = parseDate(end), initial = parseCapital(capital);
     if (!Number.isFinite(from) || !Number.isFinite(through)) throw Error('invalidDates');
     if (from < MIN_DATE || through < MIN_DATE) throw Error('minDate');
     if (from > through) throw Error('dateOrder');
@@ -52,7 +59,7 @@
       partial: from < Math.floor(availableFrom / DAY) * DAY || through > Math.floor(availableTo / DAY) * DAY,
       availableFrom, availableTo };
   }
-  const api = { replay, parseDate, date, stamp, pair };
+  const api = { replay, parseCapital, parseDate, date, stamp, pair };
   root.CryptoLoveBacktest = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(globalThis);
