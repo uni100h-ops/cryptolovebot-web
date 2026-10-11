@@ -87,3 +87,11 @@
  .site-header{gap:12px}.site-header .brand{font-size:22px}.site-header nav{font-size:12px;gap:14px}.header-actions .button{font-size:11px;padding:10px 12px}
  .live-readout{gap:10px;flex-wrap:wrap;white-space:normal;overflow-x:visible}.live-readout .live-number{font-size:40px}.live-readout .since{font-size:10px}.live-readout #auditLink{font-size:12px;white-space:normal;flex:0 1 auto}.live-readout .micro{white-space:normal;flex:1 0 100%}
 }
+
+/* Emphasize the start date and place the independent explorer immediately below it. */
+.live-readout{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:16px;row-gap:5px;white-space:normal;overflow:visible}
+.live-readout .live-number{grid-column:1;grid-row:1 / span 2;align-self:center}
+.live-readout .since{grid-column:2;grid-row:1;align-self:end;font-size:14px;line-height:1.4;font-weight:700;white-space:normal}
+.live-readout #auditLink{grid-column:2;grid-row:2;align-self:start;justify-content:flex-start;min-width:0;white-space:normal;overflow-wrap:anywhere}
+.live-readout .micro{grid-column:1 / -1;grid-row:3;white-space:normal}
+@media(max-width:570px){.live-readout{column-gap:10px}.live-readout .since{font-size:13px}}
