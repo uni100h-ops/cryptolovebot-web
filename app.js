@@ -118,6 +118,8 @@ function clearPrivateState(){
 }
 setInterval(renderFeeNotice,30000);
 
+for(const [language,label] of Object.entries({en:'View real account log',es:'Ver registro de la cuenta real',fr:'Voir le journal du compte réel',de:'Protokoll des echten Kontos öffnen'}))dictionaries[language].audit=label;
+
 let lang=localStorage.getItem('cryptoloveLanguage')||'en',me=null,settings={},history=null,filtered=[],position=0,playing=false,timer=null,signupMode=false,live=null,backtest=null,backtestMessageKey=null;
 if(!dictionaries[lang])lang='en';
 const t=k=>dictionaries[lang][k]??dictionaries.en[k]??k;
@@ -225,7 +227,7 @@ function renderLive(){
   text('liveStatus',t(connected?'baselineMissing':!live||live.status==='unconfigured'?'awaiting':'noData'));
  }
  $('liveStatus').hidden=!$('liveStatus').textContent.trim();
- if(live?.explorer&&/^https:\/\/hypurrscan\.io\/address\/0x[0-9a-f]{40}$/.test(live.explorer)){$('auditLink').hidden=false;$('auditLink').href=live.explorer}else $('auditLink').hidden=true;
+ $('auditLink').hidden=false;$('auditLink').href='account-log.html?lang='+encodeURIComponent(lang);
 }
 async function loadLive(){try{live=await api('/public/performance');renderLive()}catch{if(live)live.stale=true;else live={status:'unavailable',returnPct:null};renderLive()}}
 function renderBacktestMessage(){

@@ -2,7 +2,7 @@ services:
   - type: web
     runtime: static
     name: cryptolovebot-web
-    buildCommand: mkdir -p dist && cp index.html style.css app.js backtest.js config.js logo.svg history.json dist/
+    buildCommand: mkdir -p dist && cp index.html style.css app.js backtest.js config.js logo.svg history.json account-log.html account-log.js account-log.css dist/
     staticPublishPath: dist
     headers:
       - path: /*

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CryptoLoveBot · Real account log</title><link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="account-log.css">
+<script src="config.js" defer></script><script src="account-log.js" defer></script></head><body>
+<header class="site-header"><a class="brand" href="index.html"><img src="logo.svg" class="brand-heart" alt=""><span>CryptoLoveBot<small>LOVING CRYPTO</small></span></a><a href="index.html" data-copy="back">Back to home</a><select id="language" aria-label="Language"><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option></select></header>
+<main class="shell log-page"><p class="eyebrow">HYPERLIQUID · MAINNET</p><div class="log-heading"><h1 data-copy="title">Real account log</h1><button id="refreshLog" class="button" data-copy="refresh">Refresh</button></div>
+<p data-copy="intro">Only the public master wallet’s perpetual trades. Partial fills are grouped by order.</p><code id="logWallet"></code><p id="logStatus" class="notice" role="status"></p>
+<section id="logData" hidden>
+<div class="log-stats"><article><span data-copy="equity">Account equity · USDC</span><strong id="logEquity">—</strong></article><article><span data-copy="realized">Reported closed PnL · USDC</span><strong id="logPnl">—</strong></article><article><span data-copy="fees">Execution fees · USDC</span><strong id="logFees">—</strong></article></div>
+<p class="micro" data-copy="accountNote">Equity is the current exchange balance, including open PnL. PnL and fee totals cover the displayed executions only; funding and deposits/withdrawals are not included. They may not exactly reconcile with equity.</p>
+<div class="log-filters"><label><span data-copy="from">From</span><input id="logFrom" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" aria-label="Start date DD/MM/YYYY"></label><label><span data-copy="to">To</span><input id="logTo" type="text" inputmode="numeric" placeholder="DD/MM/YYYY" maxlength="10" aria-label="End date DD/MM/YYYY"></label><label><span data-copy="timezone">Time zone</span><select id="logZone"><option value="Europe/Madrid">Europe/Madrid</option><option value="UTC">UTC</option></select></label><button id="logCsv" class="button outline" data-copy="csv">Download CSV</button></div>
+<p id="logRange" class="micro" role="status"></p>
+<div class="table-scroll log-table" tabindex="0"><table><thead><tr><th data-copy="date">Date / time</th><th data-copy="coin">Coin</th><th data-copy="action">Action</th><th data-copy="size">Quantity</th><th data-copy="price">Average price · USDC</th><th data-copy="pnl">Closed PnL · USDC</th><th data-copy="fee">Fees</th><th data-copy="net">PnL − fees · USDC</th><th data-copy="evidence">Exchange record</th></tr></thead><tbody id="logRows"></tbody></table></div>
+<p id="logEmpty" class="empty" hidden data-copy="empty">No executions in the selected dates.</p>
+<p class="micro" data-copy="rowNote">An opening normally reports 0 closed PnL and a negative net amount from its fee. A closing row does not include its opening fee. Prices and quantities are actual executions; PnL is the exchange’s reported value.</p>
+<h2 data-copy="positions">Open positions now</h2><div id="logPositions"></div>
+<aside class="log-explanation"><strong data-copy="whyTitle">Why did the agent close?</strong><p data-copy="why">A triggered stop can be verified here. An IOC closing order alone does not reveal whether the agent used an HMA exit, an opposite cross or another rule. The exact strategy decision is recorded in the agent’s private log on Hetzner.</p></aside>
+<p class="micro" data-copy="scope">Recent history: up to 2,000 fills, from 10/10/2026. This is not a permanent archive. Refresh is cached for 60 seconds.</p><a id="logExplorer" target="_blank" rel="noopener noreferrer" data-copy="explorer">Open this wallet in Hypurrscan ↗</a>
+</section></main></body></html>

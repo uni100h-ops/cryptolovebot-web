@@ -1,0 +1,78 @@
+'use strict';
+const byId=id=>document.getElementById(id);
+const logCopy={
+ en:{back:'Back to home',title:'Real account log',refresh:'Refresh',intro:'Only the public master wallet’s perpetual trades. Partial fills are grouped by order.',equity:'Account equity · USDC',realized:'Reported closed PnL · USDC',fees:'Execution fees · USDC',accountNote:'Equity is the current exchange balance, including open PnL. PnL and fee totals cover the displayed executions only; funding and deposits/withdrawals are not included. They may not exactly reconcile with equity.',from:'From',to:'To',timezone:'Time zone',csv:'Download CSV',date:'Date / time',coin:'Coin',action:'Action',size:'Quantity',price:'Average price · USDC',pnl:'Closed PnL · USDC',fee:'Fees',net:'PnL − fees · USDC',evidence:'Exchange record',empty:'No executions in the selected dates.',rowNote:'An opening normally reports 0 closed PnL and a negative net amount from its fee. A closing row does not include its opening fee. Prices and quantities are actual executions; PnL is the exchange’s reported value.',positions:'Open positions now',whyTitle:'Why did the agent close?',why:'A triggered stop can be verified here. An IOC closing order alone does not reveal whether the agent used an HMA exit, an opposite cross or another rule. The exact strategy decision is recorded in the agent’s private log on Hetzner.',scope:'Recent history: up to 2,000 fills, from 10/10/2026. This is not a permanent archive. Refresh is cached for 60 seconds.',explorer:'Open this wallet in Hypurrscan ↗',loading:'Connecting to the account…',unavailable:'Account log unavailable. Check the API update and try again.',unconfigured:'PUBLIC_MASTER_WALLET is not configured on the server.',stale:'Old data. Refresh failed.',updated:'Updated',noPositions:'No open positions.',count:'executed orders',badDates:'The start date must not be after the end date.',limited:'History limit reached: older executions may be missing.',unrealized:'Unrealized PnL',exchange_stop:'Native stop triggered',exchange_target:'Native take profit triggered',ioc_close:'IOC close · reason in agent log',ioc:'IOC execution',execution:'Executed · strategy reason unavailable',open_long:'Open long',close_long:'Close long',open_short:'Open short',close_short:'Close short'},
+ es:{back:'Volver a la web',title:'Registro de la cuenta real',refresh:'Actualizar',intro:'Solo las operaciones de perpetuos de la wallet maestra pública. Las ejecuciones parciales se agrupan por orden.',equity:'Patrimonio de la cuenta · USDC',realized:'PnL de cierres informado · USDC',fees:'Comisiones de ejecución · USDC',accountNote:'El patrimonio es el saldo actual del exchange, incluido el PnL abierto. Los totales de PnL y comisiones solo cubren las ejecuciones mostradas; no incluyen funding ni ingresos/retiradas. Pueden no cuadrar exactamente con el patrimonio.',from:'Desde',to:'Hasta',timezone:'Zona horaria',csv:'Descargar CSV',date:'Fecha / hora',coin:'Moneda',action:'Acción',size:'Cantidad',price:'Precio medio · USDC',pnl:'PnL del cierre · USDC',fee:'Comisiones',net:'PnL − comisiones · USDC',evidence:'Registro del exchange',empty:'No hay ejecuciones en las fechas seleccionadas.',rowNote:'Una apertura normalmente informa 0 de PnL cerrado y un neto negativo por su comisión. La fila de cierre no incluye la comisión de apertura. Precios y cantidades son ejecuciones reales; el PnL es el valor informado por el exchange.',positions:'Posiciones abiertas ahora',whyTitle:'¿Por qué cerró el agente?',why:'Aquí se puede verificar la activación de un stop. Una orden de cierre IOC por sí sola no revela si el agente usó una salida por HMA, un cruce contrario u otra regla. La decisión exacta de la estrategia está en el registro privado del agente en Hetzner.',scope:'Historial reciente: hasta 2.000 ejecuciones, desde el 10/10/2026. No es un archivo permanente. La actualización tiene una caché de 60 segundos.',explorer:'Abrir esta wallet en Hypurrscan ↗',loading:'Conectando con la cuenta…',unavailable:'Registro no disponible. Comprueba la actualización de la API y vuelve a intentarlo.',unconfigured:'PUBLIC_MASTER_WALLET no está configurada en el servidor.',stale:'Datos antiguos. No se han podido actualizar.',updated:'Actualizado',noPositions:'Sin posiciones abiertas.',count:'órdenes ejecutadas',badDates:'La fecha inicial no puede ser posterior a la final.',limited:'Límite de historial alcanzado: pueden faltar ejecuciones antiguas.',unrealized:'PnL abierto',exchange_stop:'Stop nativo activado',exchange_target:'Take profit nativo activado',ioc_close:'Cierre IOC · motivo en log del agente',ioc:'Ejecución IOC',execution:'Ejecutada · motivo interno no disponible',open_long:'Abrir largo',close_long:'Cerrar largo',open_short:'Abrir corto',close_short:'Cerrar corto'},
+ fr:{back:'Retour au site',title:'Journal du compte réel',refresh:'Actualiser',intro:'Uniquement les opérations perpétuelles du wallet principal public. Les exécutions partielles sont regroupées par ordre.',equity:'Valeur du compte · USDC',realized:'PnL de clôture déclaré · USDC',fees:'Frais d’exécution · USDC',accountNote:'La valeur du compte inclut le PnL ouvert. Les totaux couvrent seulement les exécutions affichées, hors financement et dépôts/retraits. Ils peuvent différer de la variation du compte.',from:'Du',to:'Au',timezone:'Fuseau horaire',csv:'Télécharger CSV',date:'Date / heure',coin:'Actif',action:'Action',size:'Quantité',price:'Prix moyen · USDC',pnl:'PnL de clôture · USDC',fee:'Frais',net:'PnL − frais · USDC',evidence:'Registre de l’exchange',empty:'Aucune exécution sur ces dates.',rowNote:'Une ouverture affiche généralement un PnL réalisé nul et des frais négatifs en net. La clôture n’inclut pas les frais d’ouverture. Les prix et quantités sont réels ; le PnL est celui déclaré par l’exchange.',positions:'Positions ouvertes maintenant',whyTitle:'Pourquoi l’agent a-t-il clôturé ?',why:'Le déclenchement d’un stop est vérifiable ici. Un ordre IOC de clôture ne révèle pas la règle HMA, le croisement contraire ou une autre règle utilisée. La décision exacte figure dans le journal privé de l’agent sur Hetzner.',scope:'Historique récent : jusqu’à 2 000 exécutions, depuis le 10/10/2026. Ce n’est pas une archive permanente. Cache de 60 secondes.',explorer:'Ouvrir ce wallet dans Hypurrscan ↗',loading:'Connexion au compte…',unavailable:'Journal indisponible. Vérifiez la mise à jour de l’API et réessayez.',unconfigured:'PUBLIC_MASTER_WALLET n’est pas configuré sur le serveur.',stale:'Données anciennes. Actualisation impossible.',updated:'Actualisé',noPositions:'Aucune position ouverte.',count:'ordres exécutés',badDates:'La date de début doit précéder la date de fin.',limited:'Limite atteinte : des exécutions anciennes peuvent manquer.',unrealized:'PnL ouvert',exchange_stop:'Stop natif déclenché',exchange_target:'Take profit natif déclenché',ioc_close:'Clôture IOC · motif dans le journal agent',ioc:'Exécution IOC',execution:'Exécuté · motif interne indisponible',open_long:'Ouvrir long',close_long:'Clôturer long',open_short:'Ouvrir short',close_short:'Clôturer short'},
+ de:{back:'Zurück zur Website',title:'Protokoll des echten Kontos',refresh:'Aktualisieren',intro:'Nur Perpetual-Trades der öffentlichen Haupt-Wallet. Teilausführungen werden je Order zusammengefasst.',equity:'Kontowert · USDC',realized:'Gemeldeter Schluss-PnL · USDC',fees:'Ausführungsgebühren · USDC',accountNote:'Der Kontowert enthält offenen PnL. Summen gelten nur für die angezeigten Ausführungen, ohne Funding und Ein-/Auszahlungen. Sie können von der Kontowertänderung abweichen.',from:'Von',to:'Bis',timezone:'Zeitzone',csv:'CSV herunterladen',date:'Datum / Uhrzeit',coin:'Coin',action:'Aktion',size:'Menge',price:'Durchschnittspreis · USDC',pnl:'Schluss-PnL · USDC',fee:'Gebühren',net:'PnL − Gebühren · USDC',evidence:'Exchange-Protokoll',empty:'Keine Ausführungen im gewählten Zeitraum.',rowNote:'Eine Eröffnung meldet meist 0 realisierten PnL und einen negativen Nettobetrag durch Gebühren. Die Schlusszeile enthält keine Eröffnungsgebühr. Preise und Mengen sind echte Ausführungen; PnL wird vom Exchange gemeldet.',positions:'Aktuell offene Positionen',whyTitle:'Warum hat der Agent geschlossen?',why:'Ein ausgelöster Stop ist hier nachweisbar. Eine IOC-Schließung allein verrät keine HMA-Regel, kein gegensätzliches Kreuz und keine andere Strategieentscheidung. Der genaue Grund steht im privaten Agentenprotokoll auf Hetzner.',scope:'Neuere Historie: bis zu 2.000 Ausführungen seit 10.10.2026. Kein dauerhaftes Archiv. 60 Sekunden Cache.',explorer:'Diese Wallet in Hypurrscan öffnen ↗',loading:'Verbindung zum Konto…',unavailable:'Protokoll nicht verfügbar. API-Update prüfen und erneut versuchen.',unconfigured:'PUBLIC_MASTER_WALLET ist auf dem Server nicht eingerichtet.',stale:'Veraltete Daten. Aktualisierung fehlgeschlagen.',updated:'Aktualisiert',noPositions:'Keine offenen Positionen.',count:'ausgeführte Orders',badDates:'Das Startdatum muss vor dem Enddatum liegen.',limited:'Historienlimit erreicht: Ältere Ausführungen können fehlen.',unrealized:'Offener PnL',exchange_stop:'Nativer Stop ausgelöst',exchange_target:'Nativer Take Profit ausgelöst',ioc_close:'IOC-Schließung · Grund im Agentenlog',ioc:'IOC-Ausführung',execution:'Ausgeführt · interner Grund unbekannt',open_long:'Long eröffnen',close_long:'Long schließen',open_short:'Short eröffnen',close_short:'Short schließen'}
+};
+Object.assign(logCopy.en,{badDates:'Enter valid dates as DD/MM/YYYY, with start before or equal to end.'});
+Object.assign(logCopy.es,{badDates:'Introduce fechas válidas DD/MM/AAAA. La inicial no puede ser posterior a la final.'});
+Object.assign(logCopy.fr,{badDates:'Saisissez des dates valides JJ/MM/AAAA, dans l’ordre chronologique.'});
+Object.assign(logCopy.de,{badDates:'Gültige Daten als TT/MM/JJJJ eingeben, Beginn vor oder gleich Ende.'});
+function parseDay(value){
+ if(!value.trim())return '';
+ const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value.trim());if(!m)return null;
+ const iso=m[3]+'-'+m[2]+'-'+m[1],date=new Date(iso+'T00:00:00Z');
+ return Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===iso?iso:null;
+}
+let logLang=new URLSearchParams(location.search).get('lang')||localStorage.getItem('cryptoloveLanguage')||'en';
+if(!logCopy[logLang])logLang='en';
+let logData=null,visibleRows=[],busy=false,failed=false;
+const copy=key=>logCopy[logLang][key]||logCopy.en[key]||key;
+const set=(id,value)=>{byId(id).textContent=value};
+const fmt=(value,d=6)=>value===null||value===undefined?'—':Number(value).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:d});
+const zone=()=>byId('logZone').value;
+const day=ms=>new Intl.DateTimeFormat('sv-SE',{timeZone:zone(),year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(ms));
+const date=ms=>new Intl.DateTimeFormat('es-ES',{timeZone:zone(),day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(new Date(ms));
+const direction=row=>copy(row.direction.toLowerCase().replaceAll(' ','_'));
+const feeText=row=>Object.entries(row.fees).map(([token,value])=>fmt(value)+' '+token).join(' + ');
+function color(el,value){el.classList.toggle('log-negative',Number(value)<0);el.classList.toggle('log-positive',Number(value)>0)}
+function language(){document.documentElement.lang=logLang;byId('language').value=logLang;document.querySelectorAll('[data-copy]').forEach(el=>el.textContent=copy(el.dataset.copy));renderLog()}
+function renderLog(){
+ if(!logData){set('logStatus',copy(failed?'unavailable':'loading'));return}
+ set('logWallet',logData.wallet||'');
+ if(logData.status!=='ok'){byId('logData').hidden=true;set('logStatus',copy(logData.status==='unconfigured'?'unconfigured':'unavailable'));return}
+ byId('logData').hidden=false;
+ set('logStatus',((logData.stale||failed)?copy('stale')+' ':'')+copy('updated')+': '+date(logData.asOf)+' · '+zone());
+ set('logEquity',fmt(logData.equity));
+ const from=parseDay(byId('logFrom').value),to=parseDay(byId('logTo').value),invalid=from===null||to===null||(from&&to&&from>to);
+ visibleRows=invalid?[]:logData.rows.filter(r=>(!from||day(r.time)>=from)&&(!to||day(r.time)<=to));
+ set('logRange',invalid?copy('badDates'):visibleRows.length+' '+copy('count')+' · '+zone()+(logData.historyLimited?' · '+copy('limited'):''));
+ const pnl=visibleRows.reduce((sum,r)=>sum+Number(r.closedPnl),0),fees=visibleRows.reduce((sum,r)=>sum+Number(r.fees.USDC||0),0);
+ set('logPnl',invalid?'—':fmt(pnl));color(byId('logPnl'),invalid?0:pnl);set('logFees',invalid?'—':fmt(fees));
+ const body=byId('logRows');body.replaceChildren();
+ for(const row of visibleRows.slice().reverse()){
+  const tr=document.createElement('tr');
+  [date(row.time),row.coin+'/USDC',direction(row),fmt(row.size,8),fmt(row.price,8),fmt(row.closedPnl),feeText(row),fmt(row.netRealized),copy(row.evidence)].forEach((value,index)=>{const td=document.createElement('td');td.textContent=value;if(index===5)color(td,row.closedPnl);if(index===7)color(td,row.netRealized);tr.append(td)});
+  tr.title='Order '+row.orderId+' · '+row.fillCount+' fills';body.append(tr);
+ }
+ byId('logEmpty').hidden=!!visibleRows.length||invalid;byId('logCsv').disabled=!visibleRows.length;
+ const positions=byId('logPositions');positions.replaceChildren();
+ if(!logData.positions.length)positions.textContent=copy('noPositions');
+ for(const p of logData.positions){const el=document.createElement('p');el.className='log-position';el.textContent=p.coin+'/USDC · '+fmt(p.size,8)+' · '+copy('price')+': '+fmt(p.entryPrice,8)+' · '+copy('unrealized')+': '+fmt(p.unrealizedPnl)+' USDC';positions.append(el)}
+ byId('logExplorer').href='https://hypurrscan.io/address/'+logData.wallet+'#txs';
+}
+async function loadLog(){
+ if(busy)return;busy=true;byId('refreshLog').disabled=true;
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),20000);
+ try{
+  const base=window.CRYPTOLOVE?.apiUrl||'';if(!base.startsWith('https://')||base.includes('.example'))throw Error('Missing API');
+  const response=await fetch(base.replace(/\/$/,'')+'/public/account-log',{credentials:'omit',signal:controller.signal});
+  if(!response.ok)throw Error('Unavailable');const data=await response.json();
+  if(data.status==='ok'&&(!/^0x[0-9a-f]{40}$/.test(data.wallet)||!Array.isArray(data.rows)||!Array.isArray(data.positions)))throw Error('Invalid log');
+  logData=data;failed=false;
+ }catch{failed=true}finally{clearTimeout(timeout);busy=false;byId('refreshLog').disabled=false;renderLog()}
+}
+byId('language').onchange=()=>{logLang=byId('language').value;localStorage.setItem('cryptoloveLanguage',logLang);language()};
+byId('refreshLog').onclick=loadLog;
+for(const id of ['logFrom','logTo','logZone'])byId(id).onchange=renderLog;
+byId('logFrom').value='10/10/2026';byId('logTo').value=day(Date.now()).split('-').reverse().join('/');
+byId('logCsv').onclick=()=>{
+ const rows=[['wallet','timezone','time','coin','action','quantity','average_price_usdc','closed_pnl_usdc','fees','pnl_minus_fees_usdc','exchange_record','order_id']];
+ for(const r of visibleRows)rows.push([logData.wallet,zone(),date(r.time),r.coin,direction(r),r.size,r.price,r.closedPnl,feeText(r),r.netRealized??'',copy(r.evidence),r.orderId]);
+ const cell=v=>'"'+String(v).replace(/^[=+@\t\r]/,"'$&").replaceAll('"','""')+'"';
+ const blob=new Blob(['\ufeff'+rows.map(r=>r.map(cell).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='CryptoLoveBot-account-log.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+language();loadLog();
