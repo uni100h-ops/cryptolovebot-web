@@ -1,6 +1,9 @@
 # CryptoLoveBot — Web
 Official WebSite: https://cryptolovebot.com/
 
+https://www.youtube.com/watch?v=cGCE0FWduUU
+
+https://www.youtube.com/watch?v=sC6boK-1lkc&t=5s
 
 **A web interface for automated trading on Hyperliquid, with revocable agent authorization and transparent account reporting.**
 
