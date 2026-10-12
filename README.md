@@ -6,7 +6,7 @@ Official WebSite: https://cryptolovebot.com/
 
 [Website](https://cryptolovebot.com) · [Server repository](https://github.com/uni100h-ops/cryptolovebot-server) · [Hyperliquid agent management](https://app.hyperliquid.xyz/API)
 
-CryptoLoveBot is an early-stage trading product built by Antonio. Its interface brings account access, wallet authorization, historical trade replay, and real account reporting into one place. The minimum trading capital is **100 USDC**.
+CryptoLoveBot is an early-stage trading product. Its interface brings account access, wallet authorization, historical trade replay, and real account reporting into one place. The minimum trading capital is **100 USDC**.
 
 This public repository contains the frontend. The private trading engine runs separately on **Hetzner** and is not distributed here. The companion server repository is also public; it contains the API and integration layer, not the full strategy engine.
 
