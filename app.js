@@ -120,6 +120,14 @@ setInterval(renderFeeNotice,30000);
 
 for(const [language,label] of Object.entries({en:'View real account log',es:'Ver registro de la cuenta real',fr:'Voir le journal du compte réel',de:'Protokoll des echten Kontos öffnen'}))dictionaries[language].audit=label;
 
+for(const [language,labels] of Object.entries({
+ en:{openPositionsTitle:'Open positions',positionsCoin:'Coin',positionsOpened:'Opened · Madrid',positionsReturn:'PnL %',positionsLoading:'Loading positions…',positionsEmpty:'No open positions',positionsUnavailable:'Positions unavailable',positionsStale:'Old data · update failed',positionsDateUnknown:'Opening date unavailable in recent execution history',positionsReturnHint:'Price return since entry, adjusted for long/short direction; excludes leverage, fees and funding.',positionsLong:'Long',positionsShort:'Short',backtestEnd:'Backtesting end date'},
+ es:{openPositionsTitle:'Posiciones abiertas',positionsCoin:'Moneda',positionsOpened:'Apertura · Madrid',positionsReturn:'PnL %',positionsLoading:'Cargando posiciones…',positionsEmpty:'Sin posiciones abiertas',positionsUnavailable:'Posiciones no disponibles',positionsStale:'Datos antiguos · actualización pendiente',positionsDateUnknown:'Fecha de apertura no disponible en el historial reciente de ejecuciones',positionsReturnHint:'Variación desde la entrada según compra o venta; sin apalancamiento, comisiones ni financiación.',positionsLong:'Compra',positionsShort:'Venta',backtestEnd:'Fecha final de backtesting'},
+ fr:{openPositionsTitle:'Positions ouvertes',positionsCoin:'Actif',positionsOpened:'Ouverture · Madrid',positionsReturn:'PnL %',positionsLoading:'Chargement des positions…',positionsEmpty:'Aucune position ouverte',positionsUnavailable:'Positions indisponibles',positionsStale:'Données anciennes · actualisation en attente',positionsDateUnknown:'Date d’ouverture indisponible dans l’historique récent',positionsReturnHint:'Variation depuis l’entrée, selon le sens de la position ; hors levier, frais et financement.',positionsLong:'Achat',positionsShort:'Vente',backtestEnd:'Date de fin du backtesting'},
+ de:{openPositionsTitle:'Offene Positionen',positionsCoin:'Coin',positionsOpened:'Eröffnung · Madrid',positionsReturn:'PnL %',positionsLoading:'Positionen werden geladen…',positionsEmpty:'Keine offenen Positionen',positionsUnavailable:'Positionen nicht verfügbar',positionsStale:'Veraltete Daten · Aktualisierung ausstehend',positionsDateUnknown:'Eröffnungsdatum im verfügbaren Verlauf nicht enthalten',positionsReturnHint:'Kursrendite seit Einstieg unter Berücksichtigung der Handelsrichtung; ohne Hebel, Gebühren und Finanzierung.',positionsLong:'Long',positionsShort:'Short',backtestEnd:'Enddatum des Backtestings'}
+}))Object.assign(dictionaries[language],labels);
+let openPositionsData=null,openPositionsFailed=false,openPositionsBusy=false;
+
 let lang=localStorage.getItem('cryptoloveLanguage')||'en',me=null,settings={},history=null,filtered=[],position=0,playing=false,timer=null,signupMode=false,live=null,backtest=null,backtestMessageKey=null;
 if(!dictionaries[lang])lang='en';
 const t=k=>dictionaries[lang][k]??dictionaries.en[k]??k;
@@ -127,7 +135,7 @@ const num=(n,d=2)=>Number(n).toLocaleString('de-DE',{maximumFractionDigits:d,min
 const stamp=x=>CryptoLoveBacktest.stamp(x);
 const pair=x=>CryptoLoveBacktest.pair(x);
 const text=(id,value)=>{$(id).textContent=value};
-function applyLanguage(){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));document.querySelectorAll('.flag').forEach(el=>{el.classList.toggle('selected',el.dataset.lang===lang);el.setAttribute('aria-pressed',String(el.dataset.lang===lang))});setMode(signupMode);renderContact();renderUser();renderLive();renderFeeNotice();if(backtest){renderReplay();renderHistory();renderBacktestMessage()}if(settings.feeBasis==='margin'){text('feeExplanation',t('feeMargin'));document.querySelector('[data-i18n="consentFee"]').textContent=t('feeMargin')}}
+function applyLanguage(){document.documentElement.lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));document.querySelectorAll('.flag').forEach(el=>{el.classList.toggle('selected',el.dataset.lang===lang);el.setAttribute('aria-pressed',String(el.dataset.lang===lang))});setMode(signupMode);renderContact();renderUser();renderLive();renderOpenPositions();renderFeeNotice();if(backtest){renderReplay();renderHistory();renderBacktestMessage()}if(settings.feeBasis==='margin'){text('feeExplanation',t('feeMargin'));document.querySelector('[data-i18n="consentFee"]').textContent=t('feeMargin')}}
 document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{lang=b.dataset.lang;localStorage.setItem('cryptoloveLanguage',lang);applyLanguage();if(me)loadTrades()});
 function toast(s){text('toast',s);$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,6500)}
 function authFeedback(message,kind='info'){text('authMessage',message);$('authMessage').className='form-message '+kind}
@@ -230,11 +238,88 @@ function renderLive(){
  $('auditLink').hidden=false;$('auditLink').href='account-log.html?lang='+encodeURIComponent(lang);
 }
 async function loadLive(){try{live=await api('/public/performance');renderLive()}catch{if(live)live.stale=true;else live={status:'unavailable',returnPct:null};renderLive()}}
+
+function positionNumber(value){
+ if(value===null||value===undefined||typeof value==='boolean'||String(value).trim()==='')return null;
+ const n=Number(value);return Number.isFinite(n)?n:null;
+}
+function positionReturn(p){
+ const size=positionNumber(p.size),entry=positionNumber(p.entryPrice),pnl=positionNumber(p.unrealizedPnl);
+ if(size===null||!size||entry===null||entry<=0||pnl===null)return null;
+ const pct=100*pnl/(Math.abs(size)*entry);
+ return Number.isFinite(pct)?pct:null;
+}
+function positionOpenedAt(p,rows,asOf){
+ // Walk executions backwards from the actual signed position. Added size and
+ // partial closes do not reset the opening; a flat position or reversal does.
+ let after=positionNumber(p.size);
+ if(after===null||!after)return null;
+ const events=rows.filter(r=>r.coin===p.coin&&Number(r.time)<=asOf).slice().sort((a,b)=>Number(a.time)-Number(b.time));
+ for(let i=events.length-1;i>=0;i--){
+  const r=events[i],size=positionNumber(r.size),at=positionNumber(r.time);
+  const direction=String(r.direction).toLowerCase();
+  const sign=['open long','close short','short > long'].includes(direction)?1:['open short','close long','long > short'].includes(direction)?-1:0;
+  if(!sign||size===null||size<=0||at===null||at<=0)return null;
+  const before=after-sign*size,tolerance=Math.max(Math.abs(after),size)*1e-8;
+  if(Math.abs(before)<=tolerance)return at;
+  if(before*after<0){
+   // An aggregated reversal may span several fills; do not invent its exact time.
+   return Number(r.fillCount)===1?at:null;
+  }
+  after=before;
+ }
+ return null;
+}
+function renderOpenPositions(){
+ const status=$('openPositionsStatus'),body=$('openPositionsRows'),scroll=$('openPositionsScroll');
+ if(!status)return;
+ const previousScroll=scroll.scrollTop;body.replaceChildren();scroll.hidden=true;
+ status.hidden=false;status.className='positions-status';
+ const data=openPositionsData;
+ if(!data){status.textContent=t(openPositionsFailed?'positionsUnavailable':'positionsLoading');status.classList.toggle('positions-error',openPositionsFailed);return}
+ const stale=openPositionsFailed||data.stale||Date.now()-Number(data.asOf)>120000;
+ const positions=data.positions.filter(p=>Number(p.size)!==0);
+ if(!positions.length){status.textContent=t(stale?'positionsStale':'positionsEmpty');status.classList.add(stale?'positions-warning':'positions-empty');return}
+ status.textContent=stale?t('positionsStale'):'';status.hidden=!stale;status.classList.toggle('positions-warning',stale);
+ scroll.hidden=false;scroll.title=t('positionsReturnHint');
+ for(const p of positions){
+  const tr=document.createElement('tr'),coin=document.createElement('td'),date=document.createElement('td'),change=document.createElement('td');
+  coin.textContent=p.coin;const side=document.createElement('small');side.textContent=t(Number(p.size)>0?'positionsLong':'positionsShort');coin.append(side);
+  const opened=positionOpenedAt(p,data.rows,Number(data.asOf));
+  if(opened!==null){
+   const dt=new Date(opened),time=document.createElement('small');
+   date.textContent=new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',day:'2-digit',month:'2-digit',year:'numeric'}).format(dt);
+   time.textContent=new Intl.DateTimeFormat('es-ES',{timeZone:'Europe/Madrid',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(dt);
+   date.append(time);date.title=dt.toISOString();
+  }else{date.textContent='—';date.title=t('positionsDateUnknown')}
+  const pct=positionReturn(p);change.textContent=pct===null?'—':(pct>0?'+':'')+num(pct)+'%';
+  change.className=pct>0?'position-positive':pct<0?'position-negative':'';change.title=t('positionsReturnHint');
+  tr.append(coin,date,change);body.append(tr);
+ }
+ scroll.scrollTop=previousScroll;
+}
+async function loadOpenPositions(){
+ if(openPositionsBusy)return;openPositionsBusy=true;
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),20000);
+ try{
+  const response=await fetch(apiBase()+'/public/account-log',{credentials:'omit',cache:'no-store',signal:controller.signal});
+  if(!response.ok)throw Error('Positions unavailable');
+  const data=await response.json();
+  if(data.status!=='ok'||!/^0x[0-9a-f]{40}$/i.test(data.wallet)||!Array.isArray(data.positions)||!Array.isArray(data.rows)||!(positionNumber(data.asOf)>0))throw Error('Invalid positions response');
+  if(data.positions.some(p=>typeof p.coin!=='string'||positionNumber(p.size)===null))throw Error('Invalid position');
+  openPositionsData=data;openPositionsFailed=false;
+ }catch{openPositionsFailed=true}
+ finally{clearTimeout(timeout);openPositionsBusy=false;renderOpenPositions()}
+}
 function renderBacktestMessage(){
  const message=$('backtestMessage');
  const pieces=[];
  if(backtestMessageKey)pieces.push(t(backtestMessageKey));
  else if(backtest){if(backtest.partial)pieces.push(t('partialHistory'));if(!filtered.length)pieces.push(t('noSelectedTrades'))}
+ if(!backtestMessageKey&&backtest){
+  const availableEnd=Math.min(backtest.availableTo,CryptoLoveBacktest.MAX_DATE+86400000-1);
+  pieces.push(t('backtestEnd')+': '+CryptoLoveBacktest.date(availableEnd)+'.');
+ }
  message.hidden=!pieces.length;message.textContent=pieces.join(' ');
  message.classList.toggle('error',!!backtestMessageKey&&backtestMessageKey!=='updatedInputs');
 }
@@ -281,6 +366,6 @@ async function init(){
  applyLanguage();
  try{const r=await fetch('history.json');if(!r.ok)throw Error('history');history=await r.json();$('startDate').value=CryptoLoveBacktest.date(CryptoLoveBacktest.MIN_DATE);$('endDate').value=CryptoLoveBacktest.date(history.period.to);selectHistory()}catch{text('chartEmpty',lang==='es'?'No se pudo cargar history.json':'Could not load history.json')}
  const accountReady=(async()=>{try{settings=await api('/public/config');applyLanguage();await initGoogle()}catch{}try{await refreshMe()}catch{me=null;renderUser()}})();
- await Promise.all([accountReady,handleLink(),loadLive()]);
- setInterval(()=>{loadLive();if(me)loadTrades().catch(()=>{})},60000);
+ await Promise.all([accountReady,handleLink(),loadLive(),loadOpenPositions()]);
+ setInterval(()=>{loadLive();loadOpenPositions();if(me)loadTrades().catch(()=>{})},60000);
 }init();

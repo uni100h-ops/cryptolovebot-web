@@ -100,3 +100,23 @@
 .hero>.minimum{flex-direction:column;align-items:center;gap:3px;text-align:center}
 .live-tag{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-width:112px;min-height:58px;padding:10px 16px;font-size:28px;line-height:1.1;font-weight:800;letter-spacing:1.8px;border-radius:6px}
 .card-top>.eyebrow{min-width:0;white-space:normal}.card-top .live-dot{flex-shrink:0}
+
+/* Public master account: compact scrollable positions beside the live return. */
+.live-account-body{display:flex;align-items:center;flex-wrap:wrap;gap:16px;margin-top:16px}
+.live-account-body>.live-readout{flex:1 1 290px;min-width:0;margin:0}
+.live-positions{flex:1 1 250px;min-width:0;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff}
+.live-positions h3{font-size:12px;line-height:1.35;margin:0 0 5px;font-weight:700;letter-spacing:0}
+.positions-status{font-size:12px;line-height:1.4;margin:6px 0;color:var(--muted)}
+.positions-status.positions-empty,.positions-status.positions-error{color:#c5223e;font-weight:700}
+.positions-status.positions-warning{color:#946000}
+.positions-scroll{max-height:112px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;scrollbar-width:thin}
+.live-positions table{width:100%;font-size:11px;white-space:nowrap}
+.live-positions th{position:sticky;top:0;z-index:1;background:#fff;padding:3px 6px 5px;font-size:10px;color:var(--muted);font-weight:600}
+.live-positions td{padding:5px 6px;line-height:1.25;vertical-align:middle;font-variant-numeric:tabular-nums}
+.live-positions th:first-child,.live-positions td:first-child{padding-left:0}
+.live-positions th:last-child,.live-positions td:last-child{text-align:right;padding-right:0}
+.live-positions td:first-child{font-weight:700}
+.live-positions td small{display:block;margin-top:2px;font-size:9px;font-weight:400;line-height:1.2}
+.live-positions .position-positive{color:#087b4a;font-weight:700}
+.live-positions .position-negative{color:#c5223e;font-weight:700}
+@media(max-width:570px){.live-account-body{gap:12px}.live-positions{flex-basis:100%}.positions-scroll{max-height:140px}}
