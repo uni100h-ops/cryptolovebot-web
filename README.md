@@ -144,6 +144,6 @@ These observations describe the published source, not an inspection of the runni
 
 ## Project status and license
 
-CryptoLoveBot is under active development. Simulation and live execution are not guaranteed to produce identical trades or returns. Automated trading involves risk of loss.
+Simulation and live execution are not guaranteed to produce identical trades or returns. Automated trading involves risk of loss.
 
 The repository is public. No license file was present in the reviewed source; public availability should not be interpreted as a grant of open-source reuse rights. The private strategy engine is excluded from this repository.
